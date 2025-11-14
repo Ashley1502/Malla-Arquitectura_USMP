@@ -238,6 +238,31 @@
       border-color: #b9f2e3;
     }
 
+    .cat-construccion {
+      background: #f7efe3;
+      border-color: #e8d4b4;
+    }
+
+    .cat-fisica {
+      background: #e9f3ff;
+      border-color: #c7ddff;
+    }
+
+    .cat-estructuras {
+      background: #eaf9ff;
+      border-color: #c3e4f0;
+    }
+
+    .cat-fotografia {
+      background: #ffeef9;
+      border-color: #f7cbe3;
+    }
+
+    .cat-arte {
+      background: #f3ffe9;
+      border-color: #d6f2b8;
+    }
+
     /* PANEL LATERAL DE DETALLES */
     .sidebar {
       width: 32%;
@@ -358,9 +383,9 @@
 
   <script>
     // ==============================
-    // 1. Datos de la malla (1er y 2do ciclo)
+    // 1. Datos de la malla
     // ==============================
-    // id = nombre del curso para que sea fácil
+    // Nota: uso nombres con números (1, 2, 3...) y conecto los prerrequisitos a esos mismos nombres.
     const courses = [
       // ---------- 1er ciclo (22 cr.) ----------
       {
@@ -529,9 +554,145 @@
         category: "ingles",
         prerequisites: ["Inglés 1"],
         description: "Refuerzo de estructuras básicas y ampliación de vocabulario en inglés."
+      },
+
+      // ---------- 3er ciclo (22 cr.) ----------
+      {
+        id: "Taller 3",
+        name: "Taller 3",
+        semester: 3,
+        year: 2,
+        credits: 8,
+        mode: "presencial",
+        category: "taller",
+        // Prerrequisitos: Expresión Arquitectónica I, Taller II, Geometría Descriptiva
+        prerequisites: ["Expresión arquitectónica 1", "Taller 2", "Geometría Descriptiva"],
+        description: "Taller de mayor complejidad, articulando expresión gráfica, geometría descriptiva y criterios básicos de construcción."
+      },
+      {
+        id: "Construcción 1",
+        name: "Construcción 1",
+        semester: 3,
+        year: 2,
+        credits: 4,
+        mode: "presencial",
+        category: "construccion",
+        // Prerrequisito: Taller II
+        prerequisites: ["Taller 2"],
+        description: "Introducción a sistemas constructivos básicos, materiales y procesos de obra."
+      },
+      {
+        id: "Física General 1",
+        name: "Física General 1",
+        semester: 3,
+        year: 2,
+        credits: 4,
+        mode: "virtual",
+        category: "fisica",
+        // Prerrequisito: Matemática II
+        prerequisites: ["Matemática 2"],
+        description: "Conceptos fundamentales de física general, con énfasis en mecánica aplicada a la arquitectura."
+      },
+      {
+        id: "Estructuras 1",
+        name: "Estructuras 1",
+        semester: 3,
+        year: 2,
+        credits: 3,
+        mode: "presencial",
+        category: "estructuras",
+        // Prerrequisito: Matemática II
+        prerequisites: ["Matemática 2"],
+        description: "Principios básicos del análisis estructural y comportamiento de elementos simples."
+      },
+      {
+        id: "Expresión arquitectónica 3",
+        name: "Expresión arquitectónica 3",
+        semester: 3,
+        year: 2,
+        credits: 3,
+        mode: "presencial",
+        category: "expresion",
+        // Prerrequisito: Expresión Arquitectónica II
+        prerequisites: ["Expresión arquitectónica 2"],
+        description: "Profundización en técnicas de representación, composición y lectura espacial."
+      },
+
+      // ---------- 4to ciclo (22 cr.) ----------
+      {
+        id: "Taller 4",
+        name: "Taller 4",
+        semester: 4,
+        year: 2,
+        credits: 8,
+        mode: "presencial",
+        category: "taller",
+        // Prerrequisitos: Taller III, Construcción I
+        prerequisites: ["Taller 3", "Construcción 1"],
+        description: "Taller enfocado en proyectos con mayor complejidad constructiva y espacial, integrando criterios técnicos y expresivos."
+      },
+      {
+        id: "Construcción 2",
+        name: "Construcción 2",
+        semester: 4,
+        year: 2,
+        credits: 4,
+        mode: "presencial",
+        category: "construccion",
+        // Prerrequisito: Construcción I
+        prerequisites: ["Construcción 1"],
+        description: "Profundización en sistemas constructivos, detalles y soluciones técnicas en arquitectura."
+      },
+      {
+        id: "Estructuras 2",
+        name: "Estructuras 2",
+        semester: 4,
+        year: 2,
+        credits: 3,
+        mode: "presencial",
+        category: "estructuras",
+        // Prerrequisito: Estructuras I
+        prerequisites: ["Estructuras 1"],
+        description: "Continuación del análisis estructural, abordando sistemas más complejos y su aplicación en proyectos."
+      },
+      {
+        id: "Expresión arquitectónica 4",
+        name: "Expresión arquitectónica 4",
+        semester: 4,
+        year: 2,
+        credits: 3,
+        mode: "presencial",
+        category: "expresion",
+        // Prerrequisito: Expresión Arquitectónica III
+        prerequisites: ["Expresión arquitectónica 3"],
+        description: "Técnicas avanzadas de expresión arquitectónica, integración de distintos medios gráficos."
+      },
+      {
+        id: "Fotografía",
+        name: "Fotografía",
+        semester: 4,
+        year: 2,
+        credits: 2,
+        mode: "presencial",
+        category: "fotografia",
+        // Prerrequisitos: Expresión Arquitectónica III, Taller III
+        prerequisites: ["Expresión arquitectónica 3", "Taller 3"],
+        description: "Fundamentos de fotografía aplicados a la arquitectura y al registro de proyectos."
+      },
+      {
+        id: "Percepción del Arte y la Arquitectura",
+        name: "Percepción del Arte y la Arquitectura",
+        semester: 4,
+        year: 2,
+        credits: 2,
+        mode: "presencial",
+        category: "arte",
+        // Prerrequisitos: Taller III, Expresión Arquitectónica III
+        prerequisites: ["Taller 3", "Expresión arquitectónica 3"],
+        description: "Análisis de la percepción visual, el arte y la arquitectura, y su relación con la experiencia del espacio."
       }
 
-      // Más adelante se pueden agregar del 3er al 10mo ciclo
+      // Más adelante se pueden agregar del 5to al 10mo ciclo
     ];
 
     // ==============================
@@ -565,7 +726,7 @@
     }
 
     function getMaxSemester() {
-      return 10; // ya dejamos espacio para los 10 ciclos
+      return 10; // dejamos espacio para 10 ciclos
     }
 
     function getSemesterLabel(n) {
@@ -709,7 +870,7 @@
 
       const chipCat = document.createElement("span");
       chipCat.className = "chip";
-      chipCat.textContent = `Tipo: ${course.category || "curso"}`;
+      chipCat.textContent = `Área: ${course.category || "curso"}`;
 
       chipsContainer.appendChild(chipYear);
       chipsContainer.appendChild(chipCat);
