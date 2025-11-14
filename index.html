@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Malla Curricular Arquitectura</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #f7f7fb;
+      color: #222;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* PANEL PRINCIPAL */
+    .main {
+      flex: 1;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .header-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .header-sub {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* GRID DE CICLOS (10) */
+    .semesters {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(220px, 1fr);
+      gap: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .semester-column {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 0.8rem;
+      border: 1px solid #e2e2e2;
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 160px);
+      min-width: 230px;
+    }
+
+    .semester-header {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      color: #333;
+      text-align: center;
+    }
+
+    .semester-body {
+      overflow-y: auto;
+      padding-right: 0.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    /* TARJETAS DE CURSO */
+    .course-card {
+      position: relative;
+      border-radius: 10px;
+      padding: 0.6rem 0.7rem 0.7rem 0.7rem;
+      border: 1px solid #e0e0e0;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.08s ease, background 0.08s ease;
+      font-size: 0.85rem;
+    }
+
+    .course-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .course-card.active {
+      border-color: #4c6fff;
+      box-shadow: 0 0 0 1px #4c6fff33;
+    }
+
+    .course-card.completed {
+      opacity: 0.6;
+    }
+
+    .course-card.completed::after {
+      content: "Completado";
+      position: absolute;
+      bottom: 6px;
+      right: 8px;
+      font-size: 0.7rem;
+      background: #c8f7c5;
+      border-radius: 999px;
+      padding: 0.1rem 0.5rem;
+      color: #1f7a35;
+      border: 1px solid #9be39d;
+    }
+
+    .course-code {
+      font-size: 0.7rem;
+      color: #777;
+      margin-bottom: 0.15rem;
+    }
+
+    .course-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .course-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: #555;
+    }
+
+    .course-mode {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-credits {
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    /* BOTÓN DE COMPLETADO */
+    .complete-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid #b2b2b2;
+      background: #ffffffaa;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+      transition: background 0.08s ease, border-color 0.08s ease, transform 0.08s ease;
+    }
+
+    .complete-btn:hover {
+      background: #e6ffe7;
+      border-color: #6acb7a;
+      transform: scale(1.02);
+    }
+
+    .course-card.completed .complete-btn {
+      background: #6acb7a;
+      color: #fff;
+      border-color: #4ca85d;
+    }
+
+    /* RESALTAR PRERREQUISITOS */
+    .prereq-highlight {
+      border-color: #ff9800 !important;
+      box-shadow: 0 0 0 1px #ff980033;
+    }
+
+    /* COLORES PASTELES POR TIPO */
+    .cat-taller {
+      background: #ffe5e5;
+      border-color: #f4bcbc;
+    }
+
+    .cat-matematica {
+      background: #e6efff;
+      border-color: #c3d3ff;
+    }
+
+    .cat-expresion {
+      background: #ffe7f3;
+      border-color: #f4c1de;
+    }
+
+    .cat-lenguaje {
+      background: #fff3dd;
+      border-color: #ffd4a3;
+    }
+
+    .cat-ciudadania {
+      background: #e5fff2;
+      border-color: #b7f0d0;
+    }
+
+    .cat-metodos {
+      background: #f2e9ff;
+      border-color: #d2c1ff;
+    }
+
+    .cat-ingles {
+      background: #e8f8ff;
+      border-color: #bfe6ff;
+    }
+
+    .cat-actividades {
+      background: #fff9e5;
+      border-color: #ffe7a8;
+    }
+
+    .cat-geometria {
+      background: #e8edff;
+      border-color: #c5cffc;
+    }
+
+    .cat-topografia {
+      background: #e6fff8;
+      border-color: #b9f2e3;
+    }
+
+    /* PANEL LATERAL DE DETALLES */
+    .sidebar {
+      width: 32%;
+      max-width: 420px;
+      border-left: 1px solid #ddd;
+      background: #ffffff;
+      padding: 1.5rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+
+    .course-detail-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .course-detail-code {
+      font-size: 0.9rem;
+      color: #777;
+      margin-bottom: 0.75rem;
+    }
+
+    .chip {
+      display: inline-block;
+      padding: 0.18rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      margin-right: 0.3rem;
+      margin-bottom: 0.3rem;
+      border: 1px solid #ddd;
+      background: #fafafa;
+    }
+
+    .detail-section {
+      margin-top: 1rem;
+    }
+
+    .detail-section h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #555;
+    }
+
+    .detail-section p,
+    .detail-section ul {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #444;
+    }
+
+    .detail-section ul {
+      padding-left: 1.1rem;
+    }
+
+    /* SCROLLBARS SUAVES */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        flex-direction: column;
+      }
+      .sidebar {
+        position: relative;
+        width: 100%;
+        max-width: none;
+        height: auto;
+        border-left: none;
+        border-top: 1px solid #ddd;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="main">
+    <header class="header">
+      <div>
+        <div class="header-title">Malla Curricular - Arquitectura</div>
+        <div class="header-sub">
+          Haz clic en un curso para ver detalles. Pulsa el botón ✓ para marcarlo como completado.
+        </div>
+      </div>
+    </header>
+
+    <section class="semesters" id="semesters-container">
+      <!-- Se llena con JavaScript -->
+    </section>
+  </main>
+
+  <aside class="sidebar" id="detail-panel">
+    <h2>Detalles del curso</h2>
+    <p style="font-size:0.9rem; color:#555; margin-top:0.3rem;">
+      Selecciona un curso en la malla para ver su información:
+      créditos, modalidad (virtual/presencial) y prerrequisitos.  
+      Puedes marcar los cursos que ya hayas aprobado.
+    </p>
+  </aside>
+
+  <script>
+    // ==============================
+    // 1. Datos de la malla (1er y 2do ciclo)
+    // ==============================
+    // id = nombre del curso para que sea fácil
+    const courses = [
+      // ---------- 1er ciclo (22 cr.) ----------
+      {
+        id: "Taller 1",
+        name: "Taller 1",
+        semester: 1,
+        year: 1,
+        credits: 7,
+        mode: "presencial",
+        category: "taller",
+        prerequisites: [],
+        description: "Primer taller de diseño, introducción al proceso proyectual y al trabajo en maqueta y dibujo."
+      },
+      {
+        id: "Matemática 1",
+        name: "Matemática 1",
+        semester: 1,
+        year: 1,
+        credits: 4,
+        mode: "virtual",
+        category: "matematica",
+        prerequisites: [],
+        description: "Fundamentos de álgebra y funciones necesarios para cursos posteriores de geometría, topografía y estructuras."
+      },
+      {
+        id: "Expresión arquitectónica 1",
+        name: "Expresión arquitectónica 1",
+        semester: 1,
+        year: 1,
+        credits: 3,
+        mode: "presencial",
+        category: "expresion",
+        prerequisites: [],
+        description: "Técnicas básicas de dibujo, boceto y representación de formas y espacios arquitectónicos."
+      },
+      {
+        id: "Lenguaje",
+        name: "Lenguaje",
+        semester: 1,
+        year: 1,
+        credits: 2,
+        mode: "presencial",
+        category: "lenguaje",
+        prerequisites: [],
+        description: "Desarrollo de habilidades de comunicación escrita y comprensión lectora en contexto académico."
+      },
+      {
+        id: "Ciudadanía Intercultural",
+        name: "Ciudadanía Intercultural",
+        semester: 1,
+        year: 1,
+        credits: 2,
+        mode: "presencial",
+        category: "ciudadania",
+        prerequisites: [],
+        description: "Reflexión sobre diversidad cultural, ciudadanía y derechos, con énfasis en el contexto peruano."
+      },
+      {
+        id: "Métodos de Estudio",
+        name: "Métodos de Estudio",
+        semester: 1,
+        year: 1,
+        credits: 2,
+        mode: "presencial",
+        category: "metodos",
+        prerequisites: [],
+        description: "Estrategias de organización del tiempo, toma de apuntes y técnicas de estudio para la vida universitaria."
+      },
+      {
+        id: "Inglés 1",
+        name: "Inglés 1",
+        semester: 1,
+        year: 1,
+        credits: 1,
+        mode: "virtual",
+        category: "ingles",
+        prerequisites: [],
+        description: "Nivel inicial de inglés, vocabulario y estructuras básicas para comunicación general."
+      },
+      {
+        id: "Actividades 1",
+        name: "Actividades 1",
+        semester: 1,
+        year: 1,
+        credits: 1,
+        mode: "presencial",
+        category: "actividades",
+        prerequisites: [],
+        description: "Participación en actividades formativas, culturales o deportivas vinculadas a la vida universitaria."
+      },
+
+      // ---------- 2do ciclo (23 cr.) ----------
+      {
+        id: "Taller 2",
+        name: "Taller 2",
+        semester: 2,
+        year: 1,
+        credits: 7,
+        mode: "presencial",
+        category: "taller",
+        prerequisites: ["Taller 1"],
+        description: "Continuación del taller, con énfasis en proyectos de mayor complejidad espacial y funcional."
+      },
+      {
+        id: "Geometría Descriptiva",
+        name: "Geometría Descriptiva",
+        semester: 2,
+        year: 1,
+        credits: 4,
+        mode: "presencial",
+        category: "geometria",
+        prerequisites: ["Matemática 1"],
+        description: "Representación de formas tridimensionales mediante proyecciones y vistas, base para dibujo técnico."
+      },
+      {
+        id: "Matemática 2",
+        name: "Matemática 2",
+        semester: 2,
+        year: 1,
+        credits: 4,
+        mode: "virtual",
+        category: "matematica",
+        prerequisites: ["Matemática 1"],
+        description: "Continuación de matemática, profundizando en funciones y herramientas de cálculo aplicadas a la carrera."
+      },
+      {
+        id: "Expresión arquitectónica 2",
+        name: "Expresión arquitectónica 2",
+        semester: 2,
+        year: 1,
+        credits: 3,
+        mode: "presencial",
+        category: "expresion",
+        prerequisites: ["Expresión arquitectónica 1"],
+        description: "Desarrollo de habilidades de expresión gráfica más avanzada, incluyendo perspectiva y volumen."
+      },
+      {
+        id: "Topografía",
+        name: "Topografía",
+        semester: 2,
+        year: 1,
+        credits: 3,
+        mode: "presencial",
+        category: "topografia",
+        prerequisites: ["Matemática 1"],
+        description: "Conceptos básicos de levantamiento topográfico y lectura de planos de terreno."
+      },
+      {
+        id: "Actividades 2",
+        name: "Actividades 2",
+        semester: 2,
+        year: 1,
+        credits: 1,
+        mode: "presencial",
+        category: "actividades",
+        prerequisites: ["Actividades 1"],
+        description: "Continuidad de actividades formativas y de integración universitaria."
+      },
+      {
+        id: "Inglés 2",
+        name: "Inglés 2",
+        semester: 2,
+        year: 1,
+        credits: 1,
+        mode: "virtual",
+        category: "ingles",
+        prerequisites: ["Inglés 1"],
+        description: "Refuerzo de estructuras básicas y ampliación de vocabulario en inglés."
+      }
+
+      // Más adelante se pueden agregar del 3er al 10mo ciclo
+    ];
+
+    // ==============================
+    // 2. Utilidades
+    // ==============================
+    const semestersContainer = document.getElementById("semesters-container");
+    const detailPanel = document.getElementById("detail-panel");
+
+    const COMPLETED_KEY = "malla-arquitectura-completed";
+    let completedCourses = new Set();
+
+    function loadCompleted() {
+      try {
+        const saved = localStorage.getItem(COMPLETED_KEY);
+        if (saved) {
+          const arr = JSON.parse(saved);
+          completedCourses = new Set(arr);
+        }
+      } catch (e) {
+        console.warn("No se pudo cargar el estado de completados", e);
+      }
+    }
+
+    function saveCompleted() {
+      try {
+        const arr = Array.from(completedCourses);
+        localStorage.setItem(COMPLETED_KEY, JSON.stringify(arr));
+      } catch (e) {
+        console.warn("No se pudo guardar el estado de completados", e);
+      }
+    }
+
+    function getMaxSemester() {
+      return 10; // ya dejamos espacio para los 10 ciclos
+    }
+
+    function getSemesterLabel(n) {
+      return n + "° ciclo";
+    }
+
+    // ==============================
+    // 3. Render de la malla
+    // ==============================
+    function renderGrid() {
+      semestersContainer.innerHTML = "";
+      const maxSemester = getMaxSemester();
+
+      for (let s = 1; s <= maxSemester; s++) {
+        const column = document.createElement("div");
+        column.className = "semester-column";
+
+        const header = document.createElement("div");
+        header.className = "semester-header";
+        header.textContent = getSemesterLabel(s);
+        column.appendChild(header);
+
+        const body = document.createElement("div");
+        body.className = "semester-body";
+
+        const coursesInSemester = courses.filter(c => c.semester === s);
+
+        if (coursesInSemester.length === 0) {
+          const empty = document.createElement("div");
+          empty.style.fontSize = "0.8rem";
+          empty.style.color = "#999";
+          empty.style.textAlign = "center";
+          empty.style.marginTop = "0.5rem";
+          empty.textContent = "Sin cursos (aún)";
+          body.appendChild(empty);
+        } else {
+          coursesInSemester.forEach(course => {
+            const card = document.createElement("div");
+            card.className = "course-card";
+            card.dataset.id = course.id;
+
+            // clase de color pastel según categoría
+            if (course.category) {
+              card.classList.add("cat-" + course.category);
+            }
+
+            const code = document.createElement("div");
+            code.className = "course-code";
+            code.textContent = course.id;
+
+            const name = document.createElement("div");
+            name.className = "course-name";
+            name.textContent = course.name;
+
+            const meta = document.createElement("div");
+            meta.className = "course-meta";
+
+            const mode = document.createElement("span");
+            mode.className = "course-mode";
+            mode.textContent = course.mode === "virtual" ? "VIRTUAL" : "PRESENCIAL";
+
+            const credits = document.createElement("span");
+            credits.className = "badge-credits";
+            credits.textContent = course.credits + " cr.";
+
+            meta.appendChild(mode);
+            meta.appendChild(credits);
+
+            // Botón de completado
+            const completeBtn = document.createElement("button");
+            completeBtn.className = "complete-btn";
+            completeBtn.textContent = "✓";
+            completeBtn.title = "Marcar como completado / desmarcar";
+
+            completeBtn.addEventListener("click", (event) => {
+              event.stopPropagation(); // para que no active el click de la tarjeta
+              toggleCompleted(course.id);
+            });
+
+            card.appendChild(completeBtn);
+            card.appendChild(code);
+            card.appendChild(name);
+            card.appendChild(meta);
+
+            card.addEventListener("click", () => selectCourse(course.id));
+
+            if (completedCourses.has(course.id)) {
+              card.classList.add("completed");
+            }
+
+            body.appendChild(card);
+          });
+        }
+
+        column.appendChild(body);
+        semestersContainer.appendChild(column);
+      }
+    }
+
+    // ==============================
+    // 4. Selección y detalle de curso
+    // ==============================
+    function selectCourse(courseId) {
+      const course = courses.find(c => c.id === courseId);
+      if (!course) return;
+
+      // Quitar estados previos
+      document.querySelectorAll(".course-card").forEach(card => {
+        card.classList.remove("active", "prereq-highlight");
+      });
+
+      // Marcar curso activo
+      const activeCard = document.querySelector(`.course-card[data-id="${courseId}"]`);
+      if (activeCard) activeCard.classList.add("active");
+
+      // Resaltar prerrequisitos
+      (course.prerequisites || []).forEach(prId => {
+        const prereqCard = document.querySelector(`.course-card[data-id="${prId}"]`);
+        if (prereqCard) prereqCard.classList.add("prereq-highlight");
+      });
+
+      renderCourseDetails(course);
+    }
+
+    function renderCourseDetails(course) {
+      detailPanel.innerHTML = "";
+
+      const title = document.createElement("div");
+      title.className = "course-detail-title";
+      title.textContent = course.name;
+
+      const code = document.createElement("div");
+      code.className = "course-detail-code";
+      code.textContent = `${course.id} • ${course.credits} créditos • ${course.semester}° ciclo • ${course.mode === "virtual" ? "VIRTUAL" : "PRESENCIAL"}`;
+
+      const chipsContainer = document.createElement("div");
+
+      const chipYear = document.createElement("span");
+      chipYear.className = "chip";
+      chipYear.textContent = `Año ${course.year}`;
+
+      const chipCat = document.createElement("span");
+      chipCat.className = "chip";
+      chipCat.textContent = `Tipo: ${course.category || "curso"}`;
+
+      chipsContainer.appendChild(chipYear);
+      chipsContainer.appendChild(chipCat);
+
+      const descSection = document.createElement("div");
+      descSection.className = "detail-section";
+      const descTitle = document.createElement("h3");
+      descTitle.textContent = "Descripción";
+      const descBody = document.createElement("p");
+      descBody.textContent = course.description || "Sin descripción disponible.";
+      descSection.appendChild(descTitle);
+      descSection.appendChild(descBody);
+
+      const prereqSection = document.createElement("div");
+      prereqSection.className = "detail-section";
+      const prereqTitle = document.createElement("h3");
+      prereqTitle.textContent = "Prerrequisitos";
+      prereqSection.appendChild(prereqTitle);
+
+      if (!course.prerequisites || course.prerequisites.length === 0) {
+        const noPrereq = document.createElement("p");
+        noPrereq.textContent = "No tiene prerrequisitos.";
+        prereqSection.appendChild(noPrereq);
+      } else {
+        const list = document.createElement("ul");
+        course.prerequisites.forEach(prId => {
+          const li = document.createElement("li");
+          const prCourse = courses.find(c => c.id === prId);
+          li.textContent = prCourse ? `${prId} • ${prCourse.name}` : prId;
+          list.appendChild(li);
+        });
+        prereqSection.appendChild(list);
+      }
+
+      const note = document.createElement("div");
+      note.className = "detail-section";
+      const noteTitle = document.createElement("h3");
+      noteTitle.textContent = "Estado del curso";
+      const noteBody = document.createElement("p");
+      noteBody.textContent =
+        completedCourses.has(course.id)
+          ? "Este curso está marcado como completado. Puedes cambiarlo con el botón ✓ en la tarjeta."
+          : "Este curso aún no está marcado como completado. Usa el botón ✓ en la tarjeta para actualizar su estado.";
+      note.appendChild(noteTitle);
+      note.appendChild(noteBody);
+
+      detailPanel.appendChild(title);
+      detailPanel.appendChild(code);
+      detailPanel.appendChild(chipsContainer);
+      detailPanel.appendChild(descSection);
+      detailPanel.appendChild(prereqSection);
+      detailPanel.appendChild(note);
+    }
+
+    // ==============================
+    // 5. Marcar / desmarcar completados
+    // ==============================
+    function toggleCompleted(courseId) {
+      if (completedCourses.has(courseId)) {
+        completedCourses.delete(courseId);
+      } else {
+        completedCourses.add(courseId);
+      }
+      saveCompleted();
+      // actualizar estilos
+      const card = document.querySelector(`.course-card[data-id="${courseId}"]`);
+      if (card) {
+        card.classList.toggle("completed");
+      }
+      // si está seleccionado, actualizar texto del panel
+      const course = courses.find(c => c.id === courseId);
+      if (course) {
+        const activeCard = document.querySelector(".course-card.active");
+        if (activeCard && activeCard.dataset.id === courseId) {
+          renderCourseDetails(course);
+        }
+      }
+    }
+
+    // ==============================
+    // 6. Inicio
+    // ==============================
+    loadCompleted();
+    renderGrid();
+  </script>
+</body>
+</html>
