@@ -128,6 +128,12 @@
       color: #1f7a35;
       border: 1px solid #9be39d;
     }
+    
+        /* Cursos con prerrequisitos NO cumplidos (bloqueados) */
+    .course-card.locked {
+      opacity: 0.35;
+    }
+
 
     .course-code {
       font-size: 0.7rem;
@@ -1361,6 +1367,34 @@
       creditsSummaryEl.textContent = `Créditos completados: ${completed} / ${total}`;
     }
 
+    // ¿Este curso tiene prerrequisitos NO cumplidos?
+function hasUnmetPrereqs(course) {
+  if (!course.prerequisites || course.prerequisites.length === 0) return false;
+
+  return course.prerequisites.some(prId => {
+    // Si el prerrequisito es “80 créditos aprobados”, etc., no bloqueamos aquí
+    if (typeof prId === "string" && prId.includes("créditos aprobados")) {
+      return false;
+    }
+    // Si es un curso y NO está marcado como completado, entonces está pendiente
+    return !completedCourses.has(prId);
+  });
+}
+
+// Recorre todas las tarjetas y les pone / quita la clase "locked"
+function updateLockedStates() {
+  courses.forEach(course => {
+    const card = document.querySelector(`.course-card[data-id="${course.id}"]`);
+    if (!card) return;
+    if (hasUnmetPrereqs(course)) {
+      card.classList.add("locked");
+    } else {
+      card.classList.remove("locked");
+    }
+  });
+}
+
+
     // ==============================
     // 3. Render de la malla
     // ==============================
@@ -1433,17 +1467,23 @@
             });
 
             card.appendChild(completeBtn);
-            card.appendChild(code);
-            card.appendChild(name);
-            card.appendChild(meta);
+card.appendChild(code);
+card.appendChild(name);
+card.appendChild(meta);
 
-            card.addEventListener("click", () => selectCourse(course.id));
+card.addEventListener("click", () => selectCourse(course.id));
 
-            if (completedCourses.has(course.id)) {
-              card.classList.add("completed");
-            }
+if (completedCourses.has(course.id)) {
+  card.classList.add("completed");
+}
 
-            body.appendChild(card);
+// Si tiene prerrequisitos NO cumplidos, lo marcamos como bloqueado
+if (hasUnmetPrereqs(course)) {
+  card.classList.add("locked");
+}
+
+body.appendChild(card);
+
           });
         }
 
@@ -1697,6 +1737,7 @@
         }
       }
       updateCreditsSummary();
+      updateLockedStates(); 
     }
 
     // ==============================
@@ -1705,6 +1746,7 @@
     loadCompleted();
     renderGrid();
     updateCreditsSummary();
+    updateLockedStates();
   </script>
 </body>
 </html>
